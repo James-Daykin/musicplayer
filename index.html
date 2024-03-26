@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Player</title>
+    <style>
+      body {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(255, 228, 177);
+      }
+      .head {
+        height: 200px;
+        width: 420px;
+        background-color: green;
+        display: flex;
+        flex-direction: row;
+        border-right: 2px solid blue;
+        border-left: 2px solid blue;
+      }
+      .title {
+        height: 30px;
+        width: 420px;
+        background-color: #ffbb76;
+        border: 2px blue solid;
+        border-radius: 20px 20px 0px 0px;
+        text-align: center;
+        line-height: 30px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+      }
+      .pic {
+        height: 200px;
+        width: 50%;
+        background-color: #ffeb79;
+        display: flex;
+      }
+      .bio {
+        height: 200px;
+        width: 50%;
+        background-color: #ffeb79;
+        text-align: center;
+        padding-top: 20px;
+        padding-right: 20px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+      }
+      .image {
+        height: 160px;
+        width: 160px;
+
+        border: 2px blue solid;
+        border-radius: 10px 10px 10px 10px;
+        text-align: center;
+        margin: auto;
+      }
+      .main {
+        background-color: #ffeb79;
+        padding: 10px;
+        width: 400px;
+        border-right: 2px solid blue;
+        border-left: 2px solid blue;
+        border-bottom: 2px solid blue;
+        border-radius: 0px 0px 10px 10px;
+      }
+      .audio-player {
+        width: 300px;
+        margin: 20px auto;
+        border: 1px solid #ffeb79;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #ffbb76;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+      }
+
+      #seekSlider {
+        flex: 1;
+        margin: 0 10px;
+      }
+
+      .song-options {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+      }
+
+      .song-option {
+        cursor: pointer;
+        padding: 5px;
+        border: 1px solid #ffeb79;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        transition: background-color 0.3s;
+        background-color: #ffdbb7;
+        width: 300px;
+      }
+
+      .song-option.selected {
+        background-color: #ffbb76;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">James Daykin</div>
+    <div class="head">
+      <div class="pic"><img src="JamesPic3.jpg" class="image" /></div>
+      <div class="bio">
+        James Daykin is a session musician from York, England <br /><br />
+        Check out some song I've played on here!
+      </div>
+    </div>
+    <div class="main">
+      <div class="audio-player">
+        <audio id="audio"></audio>
+        <div class="controls">
+          <button id="playPauseBtn">Play</button>
+          <input type="range" id="seekSlider" min="0" step="1" value="0" />
+        </div>
+      </div>
+
+      <div class="song-options">
+        <div class="song-option" data-src="whale bones  James.mp3">
+          Whale Bones
+        </div>
+        <div class="song-option" data-src="Strange time to be alive James.mp3">
+          Strange Time
+        </div>
+        <div class="song-option" data-src="The other side James.mp3">
+          Other Side
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const audio = document.getElementById("audio");
+      const playPauseBtn = document.getElementById("playPauseBtn");
+      const seekSlider = document.getElementById("seekSlider");
+      const songOptions = document.querySelectorAll(".song-option");
+
+      let isPlaying = false;
+
+      function togglePlayPause() {
+        if (isPlaying) {
+          audio.pause();
+          playPauseBtn.textContent = "Play";
+        } else {
+          audio.play();
+          playPauseBtn.textContent = "Pause";
+        }
+        isPlaying = !isPlaying;
+      }
+
+      function updateSeek() {
+        audio.currentTime = seekSlider.value;
+      }
+
+      function updateSeekSlider() {
+        seekSlider.value = audio.currentTime;
+      }
+
+      function changeSong(event) {
+        audio.src = event.currentTarget.dataset.src;
+        audio.load(); // Ensure the new song is loaded
+        audio.addEventListener("loadedmetadata", function () {
+          seekSlider.max = audio.duration;
+          if (isPlaying) {
+            audio.play();
+          }
+        });
+        songOptions.forEach((option) => option.classList.remove("selected"));
+        event.currentTarget.classList.add("selected");
+      }
+
+      audio.addEventListener("timeupdate", updateSeekSlider);
+      seekSlider.addEventListener("input", updateSeek);
+      playPauseBtn.addEventListener("click", togglePlayPause);
+      songOptions.forEach((option) =>
+        option.addEventListener("click", changeSong)
+      );
+    </script>
+  </body>
+</html>
